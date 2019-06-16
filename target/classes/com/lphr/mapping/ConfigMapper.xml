@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lphr.mapper.ConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.lphr.entity.Config" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="sname" property="sname" jdbcType="VARCHAR" />
+    <result column="sys_key" property="sysKey" jdbcType="VARCHAR" />
+    <result column="sys_value" property="sysValue" jdbcType="VARCHAR" />
+    <result column="sys_des" property="sysDes" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="flag_del" property="flagDel" jdbcType="TINYINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="ListConfigResultMap" type="com.lphr.vo.ListConfigVO" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="sname" property="sname" jdbcType="VARCHAR" />
+    <result column="sys_key" property="sysKey" jdbcType="VARCHAR" />
+    <result column="sys_value" property="sysValue" jdbcType="VARCHAR" />
+    <result column="sys_des" property="sysDes" jdbcType="VARCHAR" />
+    <collection property="children" column="id" select="findAll" />
+  </resultMap>
+  <select id="findAll" resultMap="ListConfigResultMap" parameterType="java.lang.Integer">
+		SELECT
+		   id,parent_id,sname,sys_key,sys_value,sys_des
+		FROM 
+		   t_config
+		WHERE parent_id = #{parentId}
+		ORDER BY sname ASC,update_time DESC,id ASC
+  </select>
+  
+  
+  
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lphr.mapper.MemberMapper" >
+  <resultMap id="BaseResultMap" type="com.lphr.entity.Member" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="member_no" property="memberNo" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="total_cost_money" property="totalCostMoney" jdbcType="DECIMAL" />
+    <result column="total_cost_times" property="totalCostTimes" jdbcType="INTEGER" />
+    <result column="last_cost_time" property="lastCostTime" jdbcType="TIMESTAMP" />
+    <result column="points" property="points" jdbcType="INTEGER" />
+    <result column="member_level" property="memberLevel" jdbcType="VARCHAR" />
+    <result column="consume_average" property="consumeAverage" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="flag_del" property="flagDel" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, member_no, shop_id, employee_id, total_cost_money, total_cost_times, 
+    last_cost_time, points, member_level, consume_average, create_time, create_user, 
+    update_time, update_user, state, flag_del, version, memo
+  </sql>
+  <select id="selectByPrimaryKey111" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_member
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <resultMap id="ListResultMap" type="com.lphr.vo.ListMemberVO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="member_no" property="memberNo" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="employee_name" property="employeeName" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="total_cost_money" property="totalCostMoney" jdbcType="DECIMAL" />
+    <result column="total_cost_times" property="totalCostTimes" jdbcType="INTEGER" />
+    <result column="last_cost_time" property="lastCostTime" jdbcType="TIMESTAMP" />
+    <result column="points" property="points" jdbcType="INTEGER" />
+    
+    <result column="member_level" property="memberLevel" jdbcType="VARCHAR" />
+    <result column="consume_average" property="consumeAverage" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="flag_del" property="flagDel" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findByPage" resultMap="ListResultMap" parameterType="com.lphr.dto.member.ListMemberDTO" >
+    SELECT
+       m.id, m.user_id, u.phone, m.member_no, m.shop_id, p.shop_name,
+       m.employee_id, u2.nick_name employee_name, m.money, m.total_cost_money,
+       m.total_cost_times, m.last_cost_time, m.points
+    FROM t_member m
+    LEFT JOIN t_user u ON u.id = m.user_id
+    LEFT JOIN t_user u2 ON u2.id = m.employee_id
+    LEFT JOIN t_shop p ON p.id = m.shop_id
+    WHERE m.state = 1 AND m.flag_del = 0
+  </select>
+</mapper>

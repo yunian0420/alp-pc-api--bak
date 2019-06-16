@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lphr.mapper.EnterpriseMapper" >
+  
+  <select id="findByPage" resultType="com.lphr.vo.ListEnterpriseVO" parameterType="com.lphr.dto.enterprise.ListEnterpriseDTO" >
+    SELECT 
+    	p.id,
+    	p.user_id,
+    	t_user.username,
+    	p.enterprise_name,
+    	p.principal,
+    	p.contact_way,
+		p.create_time,
+    	p.state
+    FROM t_enterprise p
+    LEFT JOIN t_user ON t_user.id =  p.user_id
+    WHERE 
+    	p.state = 1 AND 
+    	p.flag_del = 0
+  </select>
+  
+  
+</mapper>

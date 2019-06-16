@@ -1,0 +1,48 @@
+
+server:
+  context-path: /
+  port: 8001
+  session:
+    timeout: 900
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.2.166:3306/alieping-test?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    username: dev
+    password: qizhi123
+    
+  # redis配置  
+  redis:
+    host: 192.168.2.166
+    password: 123456
+    database : 3
+    port: 6379
+    timeout: 6000 
+    pool:
+       max-active: 8
+       max-wait: -1
+       max-idle: 100
+       min-idle: 100
+  
+  rabbitmq:
+    host: 192.168.2.167
+    prot: 5672
+    username: lieping
+    password: Lieping@123
+        
+    
+# 系统环境参数配置    
+env:
+  verCode: 1.1.0.1170 
+  envName: test
+  #isVerifySign:if check sign
+  isVerifySign: false
+  isAuthLogin: true
+  isProduct: false
+  isSendMQ: true
+  logQueueName: logTestMQ
+  businessQueueName: businessTestMQ
+    
+  

@@ -1,0 +1,52 @@
+
+server:
+  context-path: /
+  port: 8001
+  session:
+    timeout: 900
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://111.231.99.72:3306/admin_manager?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: wdmm224126
+  devtools:
+    restart:
+      enabled: true
+#      additional-paths: src/main/java
+    
+  # redis配置  
+  redis:
+    database : 8
+    host: 111.231.99.72
+    port: 6379
+    password: redis@2018@yucong
+    timeout: 6000 
+    pool:
+       max-active: 8
+       max-wait: -1
+       max-idle: 100
+       min-idle: 100
+  
+  rabbitmq:
+    host: 111.231.99.72
+    port: 5672
+    username: yucong
+    password: wdmm224126
+        
+    
+# 系统环境参数配置    
+env:
+  verCode: 1.1.0.1170 
+  envName: prod
+  #isVerifySign:if check sign
+  isVerifySign: false
+  isAuthLogin: true
+  isProduct: true
+  isSendMQ: true
+  logQueueName: logTestMQ
+  businessQueueName: businessTestMQ
+    
+  

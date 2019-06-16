@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lphr.mapper.ShopMapper" >
+  <resultMap id="BaseResultMap" type="com.lphr.entity.Shop" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="contact_person" property="contactPerson" jdbcType="VARCHAR" />
+    <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="flag_del" property="flagDel" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, shop_name, contact_person, contact_phone, address, province_id, province_name, 
+    city_id, city_name, area_id, area_name, create_time, create_user, update_time, update_user, 
+    state, flag_del, version, memo
+  </sql>
+  <select id="selectByPrimaryKey000" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_shop
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findByPage" resultMap="BaseResultMap" parameterType="com.lphr.dto.shop.ListShopDTO" >
+    SELECT 
+    	p.id, p.shop_name, p.contact_person, p.contact_phone, p.province_id,
+	    p.province_name, p.city_id, p.city_name, p.area_id, p.area_name, p.address,
+	    p.state
+    FROM t_shop p
+    WHERE p.flag_del = 0
+  </select>
+</mapper>

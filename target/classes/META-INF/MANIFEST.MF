@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: alp-pc-api
+Implementation-Version: 1.0.0
+Built-By: 74776
+Implementation-Vendor-Id: com.lphr
+Build-Jdk: 1.8.0_144
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/alp-pc-api
+Created-By: Maven Integration for Eclipse
+

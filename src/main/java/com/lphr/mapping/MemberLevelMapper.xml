@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lphr.mapper.MemberLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.lphr.entity.MemberLevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sname" property="sname" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="sdescription" property="sdescription" jdbcType="VARCHAR" />
+    <result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+    <result column="sort_num" property="sortNum" jdbcType="INTEGER" />
+    <result column="experience_num" property="experienceNum" jdbcType="INTEGER" />
+    <result column="flag_special" property="flagSpecial" jdbcType="TINYINT" />
+    <result column="points_multiple" property="pointsMultiple" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="flag_del" property="flagDel" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sname, level, sdescription, icon_url, sort_num, experience_num, flag_special, 
+    points_multiple, create_time, create_user, update_time, update_user, state, flag_del,
+    version, memo
+  </sql>
+  <select id="selectByPrimaryKey111" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_member_level
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+</mapper>

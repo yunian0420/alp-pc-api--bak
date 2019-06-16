@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lphr.mapper.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.lphr.entity.Menu">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="scode" jdbcType="VARCHAR" property="scode" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="icon_cls" jdbcType="VARCHAR" property="iconCls" />
+    <result column="menu_sort" jdbcType="INTEGER" property="menuSort" />
+    <result column="menu_path" jdbcType="VARCHAR" property="menuPath" />
+    <result column="itype" jdbcType="INTEGER" property="itype" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="flag_del" jdbcType="INTEGER" property="flagDel" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, parent_id, scode, menu_name, icon_cls, menu_sort, menu_path, itype, state, create_time, 
+    create_user, update_time, update_user, flag_del, memo
+  </sql>
+  <select id="ListMenuByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	SELECT id, parent_id, scode, menu_name, icon_cls, menu_sort, menu_path, memo
+  	FROM t_menu
+  	WHERE state=1 AND flag_del=0
+  </select>
+  
+</mapper>

@@ -1,0 +1,26 @@
+## Spring配 置:
+spring: 
+  http: 
+    encoding:
+      charset: UTF-8 
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+  profiles:
+    #active: dev、prod、test
+    active: yucong
+
+
+
+mybatis:
+  mapper-locations: classpath:com/lphr/mapping/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+        
+pagehelper:
+  helper-dialect: mysql
+  params: count=countSql
+  reasonable: false
+  support-methods-arguments: true
+

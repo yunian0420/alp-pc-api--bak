@@ -1,0 +1,37 @@
+
+发布流程：
+
+后台发布：
+1 修改application.yml中的profiles.active为prod；
+2 打包：clean package alp-pc-api;
+3 上传jar: 将alp-pc-api-1.0.0.jar上传到/opt/alp_pc_api_deploy/;
+4 重启服务：/opt/alp_pc_api_deploy/alp_pc_api_deploy.sh
+5 执行tail -f nohup.out查看启动日志（ctrl + C 退出）；
+6 查看进程: ps -ef | prep java
+
+
+前端发布：
+1 将相应的js,html发布到/usr/local/tomcat/webapps/ROOT中；
+2 注意base_url.js不要上传，如果上传了，需要更改服务器IP；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
