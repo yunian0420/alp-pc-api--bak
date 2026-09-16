@@ -138,6 +138,7 @@ CREATE TABLE `t_scene_job` (
   `url` varchar(512) DEFAULT NULL COMMENT '链接地址，蓝词等场景且 type=url 时记录',
   `keyword` varchar(255) DEFAULT NULL COMMENT '关键词，type=keyword 时记录',
   `status` varchar(32) NOT NULL DEFAULT 'submitted' COMMENT '任务状态：submitted-提交，running-运行，timeout-超时，success-成功，fail-失败',
+  `auth` varchar(256) NOT NULL DEFAULT 'Bearer G4r8HrQFIFEphVDwxKjU9Z0E_m_sA3MY-F3gSwsZzWw' COMMENT '鉴权信息',
   `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
   `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
   `deleted` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识：0未删除 1已删除',
