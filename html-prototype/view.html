@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务查看</title>
+  <link rel="stylesheet" href="assets/common.css">
+</head>
+<body>
+  <div class="page">
+    <div id="nav"></div>
+    <div class="card" id="card"></div>
+  </div>
+  <script src="assets/common.js"></script>
+  <script>
+    document.getElementById('nav').innerHTML = KP.renderNav('view')
+    var tasks = KP.loadTasks()
+    var task = KP.queryId() ? KP.getTask(KP.queryId()) : tasks[0]
+    var card = document.getElementById('card')
+    if (!task) {
+      card.innerHTML = '<div class="empty">暂无任务，请先去创建评论点赞</div>'
+    } else {
+      var st = KP.TASK_STATUS_MAP[task.status]
+      var all = KP.flatten(task.comments)
+      card.innerHTML =
+        '<h2 class="section">任务查看</h2>' +
+        '<p class="desc">总览任务状态、归属供应商，以及每条主评 / 回复 / 叠楼 / 主评叠楼的评论状态、点赞状态和归属供应商。</p>' +
+        '<div class="info-grid">' +
+          '<div class="info-item"><div class="info-label">任务编号</div><div class="info-value">' + KP.escapeHtml(task.taskNo) + '</div></div>' +
+          '<div class="info-item"><div class="info-label">任务状态</div><div class="info-value ' + st.cls + '">' + st.label + '</div></div>' +
+          '<div class="info-item"><div class="info-label">归属供应商</div><div class="info-value">' + KP.escapeHtml(task.supplierName || '未关联') + '</div></div>' +
+          '<div class="info-item"><div class="info-label">评论 / 点赞</div><div class="info-value">' + all.length + ' / ' + all.reduce(function (sum, item) { return sum + Number(item.likeCount || 0) }, 0) + '</div></div>' +
+        '</div>' +
+        '<h2 class="section">评论与点赞明细</h2>' +
+        '<div class="tree">' +
+          '<div class="row row-main"><div class="row-left"><strong>' + KP.escapeHtml(task.taskNo) + '</strong></div></div>' +
+          KP.renderTree(task.comments, { showOwner: true }) +
+        '</div>' +
+        '<div class="footer">' +
+          '<a class="btn btn-primary btn-round" href="publish.html?id=' + task.id + '">去发布 / 调整供应商</a>' +
+          '<a class="btn btn-round" href="list.html">返回列表</a>' +
+        '</div>'
+    }
+  </script>
+</body>
+</html>

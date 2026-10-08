@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务发布</title>
+  <link rel="stylesheet" href="assets/common.css">
+</head>
+<body>
+  <div class="page">
+    <div id="nav"></div>
+    <div class="card">
+      <h2 class="section">控评内容</h2>
+      <p class="desc">将已创建的主评、回复、叠楼、主评叠楼关联到一个供应商，提交后生成一条任务记录。</p>
+      <div id="content"></div>
+      <h2 class="section" style="margin-top: 24px;">选择供应商</h2>
+      <div class="supplier-box">
+        <div class="radio-group" id="suppliers"></div>
+      </div>
+      <div class="footer">
+        <button class="btn btn-primary btn-round" id="submit" type="button">提交</button>
+        <a class="btn btn-round" href="list.html">取消</a>
+      </div>
+    </div>
+  </div>
+  <script src="assets/common.js"></script>
+  <script>
+    document.getElementById('nav').innerHTML = KP.renderNav('publish')
+    var tasks = KP.loadTasks()
+    var task = KP.queryId() ? KP.getTask(KP.queryId()) : tasks[0]
+    if (!task) {
+      document.querySelector('.card').innerHTML = '<div class="empty">暂无任务，请先去创建评论点赞</div>'
+    } else {
+      var selected = task.supplierId || ''
+      document.getElementById('content').innerHTML =
+        '<div class="tree">' +
+          '<div class="row row-main">' +
+            '<div class="row-left">' +
+              '<span>▾</span><input class="checkbox" type="checkbox">' +
+              '<strong>批次1</strong>' +
+            '</div>' +
+            '<div class="batch-tools">' +
+              '<span>间隔</span><input class="input w80" id="interval" value="' + (task.interval || '') + '">' +
+              '<button class="btn" type="button">分钟</button>' +
+              '<a class="btn-link" href="create.html?id=' + task.id + '">编辑</a>' +
+              '<button class="btn-link danger" type="button" id="removeBatch">删除批次</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="row indent-1"><input class="checkbox" type="checkbox"><strong>控评任务1</strong></div>' +
+          KP.renderTree(task.comments) +
+        '</div>' +
+        '<button class="btn-dashed" type="button">+ 添加批次</button>'
+
+      document.getElementById('suppliers').innerHTML = KP.SUPPLIERS.map(function (item) {
+        return '<label class="radio"><input type="radio" name="supplier" value="' + item.id + '"' +
+          (selected === item.id ? ' checked' : '') + '> ' + item.name + '</label>'
+      }).join('')
+
+      document.getElementById('submit').onclick = function () {
+        var checked = document.querySelector('input[name="supplier"]:checked')
+        if (!checked) {
+          alert('请选择供应商')
+          return
+        }
+        var supplier = KP.SUPPLIERS.filter(function (item) { return item.id === checked.value })[0]
+        var intervalInput = document.getElementById('interval')
+        task.interval = intervalInput ? Number(intervalInput.value || 0) : task.interval
+        KP.applySupplier(task.comments, supplier)
+        task.supplierId = supplier.id
+        task.supplierName = supplier.name
+        task.status = task.status === 'completed' ? 'completed' : 'processing'
+        task.updateTime = KP.nowText()
+        KP.upsertTask(task)
+        location.href = 'view.html?id=' + task.id
+      }
+    }
+  </script>
+</body>
+</html>

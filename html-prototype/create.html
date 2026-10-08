@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创建评论点赞</title>
+  <link rel="stylesheet" href="assets/common.css">
+</head>
+<body>
+  <div class="page">
+    <div id="nav"></div>
+    <div class="card">
+      <h2 class="section">创建评论点赞</h2>
+      <p class="desc">可新建主评，填写内容、图片和点赞数；主评下可新增回复；回复下可新增叠楼和主评叠楼。四类内容都支持内容、图片、点赞。</p>
+      <div id="editor"></div>
+      <button class="btn-dashed" id="addMain" type="button">+ 新增主评</button>
+      <div class="footer">
+        <button class="btn btn-primary btn-round" id="saveDraft" type="button">保存草稿</button>
+        <button class="btn btn-primary btn-round" id="savePublish" type="button">保存并去发布</button>
+        <a class="btn btn-round" href="list.html">取消</a>
+      </div>
+    </div>
+  </div>
+  <script src="assets/common.js"></script>
+  <script>
+    document.getElementById('nav').innerHTML = KP.renderNav('create')
+    var taskId = KP.queryId()
+    var current = taskId ? KP.getTask(taskId) : null
+    var comments = current ? JSON.parse(JSON.stringify(current.comments)) : [KP.emptyComment('main')]
+
+    function findNode(list, id) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) return list[i]
+        var child = findNode(list[i].children || [], id)
+        if (child) return child
+      }
+      return null
+    }
+
+    function removeNode(list, id) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) {
+          list.splice(i, 1)
+          return true
+        }
+        if (removeNode(list[i].children || [], id)) return true
+      }
+      return false
+    }
+
+    function bindImage(input, nodeId) {
+      input.onchange = function () {
+        var file = input.files && input.files[0]
+        if (!file) return
+        var reader = new FileReader()
+        reader.onload = function () {
+          var node = findNode(comments, nodeId)
+          node.images = [reader.result]
+          render()
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+
+    function renderNode(node) {
+      var type = KP.TYPE_MAP[node.type]
+      var extraButtons = ''
+      if (node.type === 'main' || node.type === 'existMain') {
+        extraButtons += '<button class="btn" data-act="add-reply" data-id="' + node.id + '">新增回复</button>'
+      }
+      if (node.type === 'reply') {
+        extraButtons += '<button class="btn" data-act="add-stack" data-id="' + node.id + '">新增叠楼</button>'
+        extraButtons += '<button class="btn" data-act="add-main-stack" data-id="' + node.id + '">新增主评叠楼</button>'
+      }
+      var img = node.images && node.images[0]
+        ? '<img class="preview-img" src="' + node.images[0] + '" alt="">'
+        : ''
+      var children = (node.children || []).map(renderNode).join('')
+      return '<div class="editor">' +
+        '<div class="editor-head">' +
+          '<span class="tag ' + type.cls + '">' + type.label + '</span>' +
+          '<div class="editor-actions">' + extraButtons +
+            '<button class="btn-link danger" data-act="remove" data-id="' + node.id + '">删除</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="editor-grid">' +
+          '<div><div class="field-label">内容</div>' +
+            '<textarea class="textarea" rows="3" maxlength="200" data-field="content" data-id="' + node.id + '" placeholder="请输入评论内容">' + KP.escapeHtml(node.content) + '</textarea>' +
+          '</div>' +
+          '<div>' +
+            '<div class="field-label">图片</div>' +
+            '<div class="upload">' +
+              img +
+              '<label class="upload-btn">上传图片<input type="file" accept="image/*" data-upload="' + node.id + '"></label>' +
+            '</div>' +
+            '<div class="field-label" style="margin-top:10px;">点赞数</div>' +
+            '<input class="input w80" type="number" min="0" data-field="likeCount" data-id="' + node.id + '" value="' + (node.likeCount || 0) + '">' +
+          '</div>' +
+        '</div>' +
+        (children ? '<div class="child-box">' + children + '</div>' : '') +
+      '</div>'
+    }
+
+    function render() {
+      var box = document.getElementById('editor')
+      box.innerHTML = comments.length ? comments.map(renderNode).join('') : '<div class="empty">还没有主评，点击下方按钮开始创建</div>'
+      Array.prototype.forEach.call(box.querySelectorAll('[data-field]'), function (el) {
+        el.oninput = function () {
+          var node = findNode(comments, el.getAttribute('data-id'))
+          if (el.getAttribute('data-field') === 'likeCount') {
+            node.likeCount = Number(el.value || 0)
+          } else {
+            node.content = el.value
+          }
+        }
+      })
+      Array.prototype.forEach.call(box.querySelectorAll('[data-upload]'), function (el) {
+        bindImage(el, el.getAttribute('data-upload'))
+      })
+      Array.prototype.forEach.call(box.querySelectorAll('[data-act]'), function (el) {
+        el.onclick = function () {
+          var id = el.getAttribute('data-id')
+          var act = el.getAttribute('data-act')
+          var node = findNode(comments, id)
+          if (act === 'remove') removeNode(comments, id)
+          if (act === 'add-reply') node.children.push(KP.emptyComment('reply', id))
+          if (act === 'add-stack') node.children.push(KP.emptyComment('stack', id))
+          if (act === 'add-main-stack') node.children.push(KP.emptyComment('mainStack', id))
+          render()
+        }
+      })
+    }
+
+    function save(goPublish) {
+      if (!comments.length) {
+        alert('请至少新增一条主评')
+        return
+      }
+      if (!KP.validateComments(comments)) {
+        alert('请完善每条评论的内容')
+        return
+      }
+      var now = KP.nowText()
+      var task = current || {
+        id: KP.uid('task'),
+        taskNo: KP.taskNo(),
+        status: 'draft',
+        supplierId: '',
+        supplierName: '',
+        interval: 5,
+        createTime: now
+      }
+      task.comments = comments
+      task.updateTime = now
+      if (!task.status) task.status = 'draft'
+      KP.upsertTask(task)
+      if (goPublish) {
+        location.href = 'publish.html?id=' + task.id
+        return
+      }
+      location.href = 'list.html'
+    }
+
+    document.getElementById('addMain').onclick = function () {
+      comments.push(KP.emptyComment('main'))
+      render()
+    }
+    document.getElementById('saveDraft').onclick = function () { save(false) }
+    document.getElementById('savePublish').onclick = function () { save(true) }
+    render()
+  </script>
+</body>
+</html>
