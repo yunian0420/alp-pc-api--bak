@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>控评任务列表</title>
+  <link rel="stylesheet" href="assets/common.css">
+</head>
+<body>
+  <div class="page">
+    <div id="nav"></div>
+    <div class="card">
+      <h2 class="section">控评任务列表</h2>
+      <p class="desc">先创建主评、回复、叠楼和主评叠楼，再关联供应商发布。发布后可查看每条评论和点赞的状态、归属供应商。</p>
+      <div class="toolbar">
+        <div class="filters">
+          <input id="keyword" class="input w220" placeholder="搜索任务编号 / 主评内容">
+          <select id="status" class="select">
+            <option value="">全部状态</option>
+            <option value="draft">草稿</option>
+            <option value="published">已发布</option>
+            <option value="processing">进行中</option>
+            <option value="completed">已完成</option>
+          </select>
+          <select id="supplier" class="select">
+            <option value="">全部供应商</option>
+          </select>
+        </div>
+        <a class="btn btn-primary" href="create.html">创建评论点赞</a>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>任务编号</th>
+              <th>主评内容</th>
+              <th>评论数</th>
+              <th>点赞数</th>
+              <th>归属供应商</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="assets/common.js"></script>
+  <script>
+    document.getElementById('nav').innerHTML = KP.renderNav('list')
+    var supplierSelect = document.getElementById('supplier')
+    KP.SUPPLIERS.forEach(function (item) {
+      var option = document.createElement('option')
+      option.value = item.id
+      option.textContent = item.name
+      supplierSelect.appendChild(option)
+    })
+
+    function render() {
+      var keyword = document.getElementById('keyword').value
+      var status = document.getElementById('status').value
+      var supplierId = document.getElementById('supplier').value
+      var rows = KP.loadTasks().filter(function (task) {
+        var all = KP.flatten(task.comments)
+        var summary = (all[0] && all[0].content) || ''
+        var text = task.taskNo + summary
+        return (!keyword || text.indexOf(keyword) > -1)
+          && (!status || task.status === status)
+          && (!supplierId || task.supplierId === supplierId)
+      }).map(function (task) {
+        var all = KP.flatten(task.comments)
+        var summary = (all[0] && all[0].content) || '-'
+        var likes = all.reduce(function (sum, item) { return sum + Number(item.likeCount || 0) }, 0)
+        var st = KP.TASK_STATUS_MAP[task.status]
+        return '<tr>' +
+          '<td>' + KP.escapeHtml(task.taskNo) + '</td>' +
+          '<td>' + KP.escapeHtml(summary) + '</td>' +
+          '<td>' + all.length + '</td>' +
+          '<td>' + likes + '</td>' +
+          '<td>' + KP.escapeHtml(task.supplierName || '未关联') + '</td>' +
+          '<td class="' + st.cls + '">' + st.label + '</td>' +
+          '<td>' + task.createTime + '</td>' +
+          '<td class="ops">' +
+            (task.status === 'draft' ? '<a href="create.html?id=' + task.id + '">编辑</a>' : '') +
+            '<a href="publish.html?id=' + task.id + '">发布</a>' +
+            '<a href="view.html?id=' + task.id + '">查看</a>' +
+          '</td>' +
+        '</tr>'
+      }).join('')
+      document.getElementById('tbody').innerHTML = rows || '<tr><td colspan="8" class="empty">暂无任务</td></tr>'
+    }
+
+    document.getElementById('keyword').oninput = render
+    document.getElementById('status').onchange = render
+    document.getElementById('supplier').onchange = render
+    render()
+  </script>
+</body>
+</html>
